@@ -12,9 +12,12 @@ const Grid = () => {
 
     const handleSelectCell = (cellId, rowIndex, cellIndex) => {
         if (canSelectCells) {
+            console.log("handleSelectCell", cellId)
+            console.log("handleSelectCell", cellId)
             socket.emit("game.grid.selected", { cellId, rowIndex, cellIndex });
         }
     };
+    console.log("handleSelectCell")
 
     useEffect(() => {
         socket.on("game.grid.view-state", (data) => {
@@ -25,7 +28,7 @@ const Grid = () => {
     }, []);
 
     return (
-        <View style={styles.gridContainer}>
+           <View style={styles.gridContainer}>
             {displayGrid &&
                 grid.map((row, rowIndex) => (
                     <View key={rowIndex} style={styles.row}>
