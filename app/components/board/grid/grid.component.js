@@ -25,7 +25,7 @@ const Grid = () => {
     }, []);
 
     return (
-        <View style={styles.gridContainer}>
+           <View style={styles.gridContainer}>
             {displayGrid &&
                 grid.map((row, rowIndex) => (
                     <View key={rowIndex} style={styles.row}>
