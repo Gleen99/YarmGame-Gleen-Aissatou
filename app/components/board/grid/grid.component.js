@@ -27,10 +27,14 @@ const Grid = () => {
     const handleClicked = (id, isChecked) => (id == 'defi') ? !isChecked : isChecked;
     
     return (
+<<<<<<< HEAD
 
         <View style={styles.gridContainer}>
 
             {console.log(grid)}
+=======
+           <View style={styles.gridContainer}>
+>>>>>>> 1dca791134075e4a38946f58fd18a28782181e23
             {displayGrid &&
                 grid.map((row, rowIndex) => (
                     <View key={rowIndex} style={styles.row}>
