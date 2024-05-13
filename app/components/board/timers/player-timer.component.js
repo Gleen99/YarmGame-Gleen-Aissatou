@@ -11,6 +11,7 @@ const PlayerTimer = () => {
 
         socket.on("game.timer", (data) => {
             setPlayerTimer(data['playerTimer'])
+           
         });
 
     }, []);
@@ -18,6 +19,7 @@ const PlayerTimer = () => {
     return (
 
         <View style={styles.playerTimerContainer}>
+             {console.log(playerTimer)}
             <Text>Timer: {playerTimer}</Text>
         </View>
         

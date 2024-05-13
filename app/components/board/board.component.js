@@ -6,39 +6,18 @@ import PlayerTimer from "./timers/player-timer.component";
 import OpponentTimer from "./timers/opponent-timer.component";
 import Choices from "./choices/choices.component";
 import Grid from "./grid/grid.component";
+import { OpponentInfos } from "./opponent-infos.component";
+import { PlayerScore } from "../score/player-score.component";
+import { OpponentScore } from "../score/opponent-score.component";
+import { PlayerInfos } from "./player-infos.component";
 
-const OpponentInfos = () => {
-  return (
-    <View style={styles.opponentInfosContainer}>
-      <Text>Opponent infos</Text>
-    </View>
-  );
-};
 
-const OpponentScore = () => {
-  return (
-    <View style={styles.opponentScoreContainer}>
-      <Text>Score: </Text>
-    </View>
-  );
-};
 
-const PlayerInfos = () => {
-  return (
-    <View style={styles.playerInfosContainer}>
-      <Text>Player Infos</Text>
-    </View>
-  );
-};
 
-const PlayerScore = () => {
 
-  return (
-    <View style={styles.playerScoreContainer}>
-      <Text>PlayerScore</Text>
-    </View>
-  );
-};
+
+
+
 
 const Board = ({ gameViewState }) => {
 

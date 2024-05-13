@@ -9,7 +9,7 @@ const PlayerDeck = () => {
   const [displayPlayerDeck, setDisplayPlayerDeck] = useState(false);
   const [dices, setDices] = useState(Array(5).fill(false));
   const [displayRollButton, setDisplayRollButton] = useState(false);
-  const [rollsCounter, setRollsCounter] = useState(1);
+  const [rollsCounter, setRollsCounter] = useState(0);
   const [rollsMaximum, setRollsMaximum] = useState(3);
 
   console.log("rollsCounter", rollsCounter)
@@ -58,6 +58,7 @@ const PlayerDeck = () => {
             <>
               <View style={styles.rollInfoContainer}>
                 <Text style={styles.rollInfoText}>
+                  {console.log("valeur",rollsCounter)}
                   Lancer {rollsCounter} / {rollsMaximum}
                 </Text>
               </View>

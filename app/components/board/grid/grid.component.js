@@ -24,11 +24,17 @@ const Grid = () => {
         });
     }, []);
 
+    const handleClicked = (id, isChecked) => (id == 'defi') ? !isChecked : isChecked;
+    
     return (
+
         <View style={styles.gridContainer}>
+
+            {console.log(grid)}
             {displayGrid &&
                 grid.map((row, rowIndex) => (
                     <View key={rowIndex} style={styles.row}>
+                        
                         {row.map((cell, cellIndex) => (
                             <TouchableOpacity
                                 key={cell.id}
@@ -41,7 +47,7 @@ const Grid = () => {
                                     cellIndex !== 0 && styles.leftBorder,
                                 ]}
                                 onPress={() => handleSelectCell(cell.id, rowIndex, cellIndex)}
-                                disabled={!cell.canBeChecked}
+                                disabled={handleClicked(cell.id, !cell.canBeChecked)}
                             >
                                 <Text style={styles.cellText}>{cell.viewContent}</Text>
                             </TouchableOpacity>

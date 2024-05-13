@@ -172,9 +172,29 @@ const GameService = {
                     grid: gameState.grid
                 };
 
-            }
+            },
+            scoreViewState: (playerKey, gameState) => {
+                const score = gameState.score; // Récupérer le score du gameState
+                const scoreView = {
+                    playerKey: playerKey,
+                    score: score
+                    // Vous pouvez ajouter d'autres détails du score ici si nécessaire
+                };
+                return scoreView
+            },
+            updateScore: (playerKey, gameState) => {
+                console.log("le debut",playerKey)
+                console.log("le suivant oubien",gameState.currentTurn)
+                const playerScore = gameState.currentTurn === playerKey ? gameState.player1Score : gameState.player2Score;
+                const opponentScore = gameState.currentTurn === playerKey ? gameState.player2Score : gameState.player1Score;
+                console.log("playerScore:",playerScore, "opponentScore:", opponentScore)
+                return { playerScore: playerScore, opponentScore: opponentScore };
+            },
+            
         }
     },
+
+    
 
     timer: {  
         getTurnDuration: () => {
@@ -324,7 +344,279 @@ const GameService = {
             }));
         
             return updatedGrid;
-        }
+        },
+        calculateScore: (selectedCells, grid) => {
+            let score = 0;
+            
+            // Parcourir les cellules sélectionnées par le joueur
+            selectedCells.forEach(selectedCell => {
+                // Trouver la cellule correspondante dans la grille
+                const row = selectedCell.row;
+                const col = selectedCell.col;
+                const cell = grid[row][col];
+                
+                // Vérifier la combinaison de la cellule et attribuer des points en conséquence
+                switch(cell.id) {
+                    case 'brelan1':
+                    case 'brelan2':
+                    case 'brelan3':
+                    case 'brelan4':
+                    case 'brelan5':
+                    case 'brelan6':
+                        // Brelan - somme des valeurs des dés
+                        score += cell.value.reduce((acc, curr) => acc + parseInt(curr), 0);
+                        break;
+                    case 'carre':
+                        // Carré - somme des valeurs des dés
+                        score += cell.value.reduce((acc, curr) => acc + parseInt(curr), 0);
+                        break;
+                    case 'full':
+                        // Full - 25 points
+                        score += 25;
+                        break;
+                    case 'yam':
+                        // Yam - 50 points
+                        score += 50;
+                        break;
+                    case 'suite':
+                        // Suite - 40 points
+                        score += 40;
+                        break;
+                    case 'moinshuit':
+                        // ≤8 - somme des valeurs des dés
+                        score += cell.value.reduce((acc, curr) => acc + parseInt(curr), 0);
+                        break;
+                    case 'sec':
+                        // Sec - somme des valeurs des dés
+                        score += cell.value.reduce((acc, curr) => acc + parseInt(curr), 0);
+                        break;
+                    case 'defi':
+                        // Défi - 30 points
+                        score += 30;
+                        break;
+                    // Ajoutez d'autres cas pour d'autres combinaisons si nécessaire
+                }
+            });
+            
+            return score;
+        },
+        
+        checkWinCondition(grid, currentPlayer) {
+            // Fonction pour vérifier l'alignement horizontal
+            const checkHorizontal = () => {
+                for (let row = 0; row < grid.length; row++) {
+                    let consecutiveCount = 0;
+                    for (let col = 0; col < grid[row].length; col++) {
+                        if (grid[row][col].owner !== currentPlayer) {
+                            consecutiveCount = 0; // Réinitialiser le compteur s'il y a une interruption
+                        } else {
+                            consecutiveCount++;
+                            if (consecutiveCount === 5) {
+                                return true; // Un alignement de cinq pions a été trouvé
+                            }
+                        }
+                    }
+                }
+                return false; // Aucun alignement de cinq pions trouvé
+            };
+        
+            // Fonction pour vérifier l'alignement vertical
+            const checkVertical = () => {
+                for (let col = 0; col < grid[0].length; col++) {
+                    let consecutiveCount = 0;
+                    for (let row = 0; row < grid.length; row++) {
+                        if (grid[row][col].owner !== currentPlayer) {
+                            consecutiveCount = 0; // Réinitialiser le compteur s'il y a une interruption
+                        } else {
+                            consecutiveCount++;
+                            if (consecutiveCount === 5) {
+                                return true; // Un alignement de cinq pions a été trouvé
+                            }
+                        }
+                    }
+                }
+                return false; // Aucun alignement de cinq pions trouvé
+            };
+        
+            // Fonction pour vérifier l'alignement en diagonale (de gauche à droite)
+            const checkDiagonalLR = () => {
+                for (let row = 0; row < grid.length - 4; row++) {
+                    for (let col = 0; col < grid[row].length - 4; col++) {
+                        let consecutiveCount = 0;
+                        for (let i = 0; i < 5; i++) {
+                            if (grid[row + i][col + i].owner !== currentPlayer) {
+                                consecutiveCount = 0; // Réinitialiser le compteur s'il y a une interruption
+                            } else {
+                                consecutiveCount++;
+                                if (consecutiveCount === 5) {
+                                    return true; // Un alignement de cinq pions a été trouvé
+                                }
+                            }
+                        }
+                    }
+                }
+                return false; // Aucun alignement de cinq pions trouvé
+            };
+        
+            // Fonction pour vérifier l'alignement en diagonale (de droite à gauche)
+            const checkDiagonalRL = () => {
+                for (let row = 0; row < grid.length - 4; row++) {
+                    for (let col = grid[row].length - 1; col >= 4; col--) {
+                        let consecutiveCount = 0;
+                        for (let i = 0; i < 5; i++) {
+                            if (grid[row + i][col - i].owner !== currentPlayer) {
+                                consecutiveCount = 0; // Réinitialiser le compteur s'il y a une interruption
+                            } else {
+                                consecutiveCount++;
+                                if (consecutiveCount === 5) {
+                                    return true; // Un alignement de cinq pions a été trouvé
+                                }
+                            }
+                        }
+                    }
+                }
+                return false; // Aucun alignement de cinq pions trouvé
+            };
+        
+            // Appel des fonctions de vérification
+            if (checkHorizontal() || checkVertical() || checkDiagonalLR() || checkDiagonalRL()) {
+                return true; // Un alignement de cinq pions a été trouvé
+            } else {
+                return false; // Aucun alignement de cinq pions trouvé
+            }
+        },
+        
+
+        calculateScoreWithAlignments: (grid, player) => {
+                let score = 0;
+                console.log("palyer ",player)
+                // Fonction pour vérifier si un alignement de pions est présent dans une ligne
+                const checkAlignmentInRow = (row) => {
+                    let count = 0;
+                    for (let i = 0; i < row.length; i++) {
+                        
+                        console.log("owner",row[i].owner)
+                        if (row[i].owner === player) {
+                            console.log("count",count)
+                            count++;
+                        } else {
+                            count = 0;
+                        }
+                        if (count >= 3) {
+                            score += 1;
+                        }
+                        if (count === 4) {
+                            score += 1;
+                        }
+                    }
+                };
+        
+                // Fonction pour vérifier si un alignement de pions est présent dans une colonne
+                const checkAlignmentInColumn = (columnIndex) => {
+                    let count = 0;
+                    for (let i = 0; i < grid.length; i++) {
+                        if (grid[i][columnIndex].owner === player) {
+                            count++;
+                        } else {
+                            count = 0;
+                        }
+                        if (count >= 3) {
+                            score += 1;
+                        }
+                        if (count === 4) {
+                            score += 1;
+                        }
+                    }
+                };
+        
+                // Fonction pour vérifier si un alignement de pions est présent dans une diagonale
+                const checkAlignmentInDiagonal = (startRowIndex, startColumnIndex, direction) => {
+                    let count = 0;
+                    let rowIndex = startRowIndex;
+                    let columnIndex = startColumnIndex;
+                    while (rowIndex >= 0 && rowIndex < grid.length && columnIndex >= 0 && columnIndex < grid[0].length) {
+                        if (grid[rowIndex][columnIndex].owner === player) {
+                            count++;
+                        } else {
+                            count = 0;
+                        }
+                        if (count >= 3) {
+                            score += 1;
+                        }
+                        if (count === 4) {
+                            score += 1;
+                        }
+                        if (direction === 'up-right' || direction === 'down-right') {
+                            rowIndex++;
+                        } else {
+                            rowIndex--;
+                        }
+                        if (direction === 'up-left' || direction === 'up-right') {
+                            columnIndex++;
+                        } else {
+                            columnIndex--;
+                        }
+                    }
+                };
+        
+                // Parcours de la grille pour vérifier les alignements
+                for (let i = 0; i < grid.length; i++) {
+                    checkAlignmentInRow(grid[i]);
+                }
+                for (let i = 0; i < grid[0].length; i++) {
+                    checkAlignmentInColumn(i);
+                }
+                for (let i = 0; i < grid.length; i++) {
+                    checkAlignmentInDiagonal(i, 0, 'up-right');
+                    checkAlignmentInDiagonal(i, 0, 'down-right');
+                    checkAlignmentInDiagonal(i, grid[0].length - 1, 'up-left');
+                    checkAlignmentInDiagonal(i, grid[0].length - 1, 'down-left');
+                }
+                console.log("ssssssssssssssss",score)
+                return score;
+        },
+        
+            
+        checkGameEnd: (grid, player1Score, player2Score) => {
+                    // Vérifier s'il reste des pions à chaque joueur
+                    const player1HasPions = player1Score < 12;
+                    const player2HasPions = player2Score < 12;
+            
+                    // Vérifier si l'un des joueurs a réalisé un alignement de cinq pions
+                    const player1Won = checkWinCondition(grid, 'player1');
+                    const player2Won = checkWinCondition(grid, 'player2');
+            
+                    // Vérifier les conditions de fin de partie
+                    if (!player1HasPions || !player2HasPions || player1Won || player2Won) {
+                        // La partie est terminée
+                        let winner = null;
+                        if (player1Won) {
+                            winner = 'player1';
+                        } else if (player2Won) {
+                            winner = 'player2';
+                        } else if (!player1HasPions && !player2HasPions) {
+                            // En cas d'égalité, le joueur avec le score le plus élevé gagne
+                            if (player1Score > player2Score) {
+                                winner = 'player1';
+                            } else if (player2Score > player1Score) {
+                                winner = 'player2';
+                            }
+                        }
+                        return {
+                            gameEnd: true,
+                            winner: winner
+                        };
+                    } else {
+                        // La partie continue
+                        return {
+                            gameEnd: false,
+                            winner: null
+                        };
+                    }
+        },
+         
+            
+            
 
     },
 

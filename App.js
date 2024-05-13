@@ -15,7 +15,7 @@ LogBox.ignoreAllLogs(true);
 function App() {
   return (
     <SocketContext.Provider value={socket}>
-      <NavigationContainer>
+      <NavigationContainer> 
         <Stack.Navigator initialRouteName="HomeScreen">
           <Stack.Screen name="HomeScreen" component={HomeScreen} />
           <Stack.Screen name="OnlineGameScreen" component={OnlineGameScreen} />

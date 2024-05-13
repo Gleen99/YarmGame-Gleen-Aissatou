@@ -26,6 +26,24 @@ const updateClientsViewDecks = (game) => {
   }, 200);
 };
 
+const updateClientsViewScore = (game) => {
+  game.player1Socket.emit('game.score.update', {
+      player: 'player:1',
+      score: game.gameState.player1Score
+  });
+  game.player2Socket.emit('game.score.update', {
+      player: 'player:2',
+      score: game.gameState.player2Score
+  });
+};
+
+/*  const updateClientsViewScore = (game) => {
+  setTimeout(() => {
+    game.player1Socket.emit('game.score.update', GameService.send.forPlayer.updateScore('player:1', game.gameState));
+    game.player2Socket.emit('game.score.update', GameService.send.forPlayer.updateScore('player:2', game.gameState));
+  }, 200);
+};  */
+
 const updateClientsViewChoices = (game) => {
   setTimeout(() => {
     game.player1Socket.emit('game.choices.view-state', GameService.send.forPlayer.choicesViewState('player:1', game.gameState));
@@ -211,6 +229,51 @@ io.on('connection', socket => {
     games[gameIndex].gameState.grid = GameService.grid.selectCell(data.cellId, data.rowIndex, data.cellIndex, games[gameIndex].gameState.currentTurn, games[gameIndex].gameState.grid);
 
     // Here calcul score
+    //-------------------------------------------
+    // Calcul du score pour le joueur 1
+  const player1Score = GameService.grid.calculateScoreWithAlignments(games[gameIndex].gameState.grid, 'player:1');
+  games[gameIndex].gameState.player1Score = player1Score;
+  console.log("score1",player1Score)
+
+// Calcul du score pour le joueur 2
+  const player2Score = GameService.grid.calculateScoreWithAlignments(games[gameIndex].gameState.grid, 'player:2');
+  games[gameIndex].gameState.player2Score = player2Score;
+  console.log("score2",player2Score)
+
+
+    // Envoyer le score mis à jour aux clients
+  
+      updateClientsViewScore(games[gameIndex])
+      // Vérification de la fin de partie (à implémenter)
+     /*  const gameEnded =GameService.grid.checkGameEnd(GameService.grid, player1Score,player2Score); // À implémenter
+  
+      // Si la partie n'est pas terminée, passage au tour suivant
+      if (!gameEnded) {
+          games[gameIndex].gameState.currentTurn = games[gameIndex].gameState.currentTurn === 'player:1' ? 'player:2' : 'player:1';
+          games[gameIndex].gameState.timer = GameService.timer.getTurnDuration();
+          games[gameIndex].gameState.deck = GameService.init.deck();
+          games[gameIndex].gameState.choices = GameService.init.choices();
+  
+          games[gameIndex].player1Socket.emit('game.timer', GameService.send.forPlayer.gameTimer('player:1', games[gameIndex].gameState));
+          games[gameIndex].player2Socket.emit('game.timer', GameService.send.forPlayer.gameTimer('player:2', games[gameIndex].gameState));
+  
+          updateClientsViewDecks(games[gameIndex]);
+          updateClientsViewChoices(games[gameIndex]);
+          updateClientsViewGrid(games[gameIndex]);
+      } else {
+          // La partie est terminée, faire quelque chose (par exemple, afficher un message de fin de jeu)
+          console.log('La partie est terminée !');
+      } */
+  
+
+
+
+
+
+
+
+
+    //---------------------------------------------------------------------
 
     games[gameIndex].gameState.currentTurn = games[gameIndex].gameState.currentTurn === 'player:1' ? 'player:2' : 'player:1';
     games[gameIndex].gameState.timer = GameService.timer.getTurnDuration();
@@ -225,6 +288,13 @@ io.on('connection', socket => {
     updateClientsViewChoices(games[gameIndex]);
     updateClientsViewGrid(games[gameIndex]);
   });
+// Du côté client
+socket.on('game.score.update', (data) => {
+  // Mettre à jour la vue avec les nouveaux scores
+  const player = data.player;
+  const score = data.score;
+  // Mettre à jour l'affichage des scores pour le joueur spécifié
+});
 
   socket.on('disconnect', reason => {
     console.log(`[${socket.id}] socket disconnected - ${reason}`);
