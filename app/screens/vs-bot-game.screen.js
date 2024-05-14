@@ -1,9 +1,10 @@
 import React, { useContext } from "react";
 import { StyleSheet, View, Button, Text } from "react-native";
 import { SocketContext } from '../contexts/socket.context';
+import BotPlayer from "../botPlayer/BotPlayer";
 
 export default function VsBotGameScreen({ navigation }) {
-    
+
     const socket = useContext(SocketContext);
 
     return (
@@ -29,6 +30,7 @@ export default function VsBotGameScreen({ navigation }) {
                     <Text style={styles.footnote}>
                         My socket id is: {socket.id}
                     </Text>
+                    <BotPlayer/>
                     <Button
                         title="Revenir au menu"
                         onPress={() => navigation.navigate('HomeScreen')}

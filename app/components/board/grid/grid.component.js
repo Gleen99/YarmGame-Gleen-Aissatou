@@ -12,9 +12,12 @@ const Grid = () => {
 
     const handleSelectCell = (cellId, rowIndex, cellIndex) => {
         if (canSelectCells) {
+            console.log("handleSelectCell", cellId)
+            console.log("handleSelectCell", cellId)
             socket.emit("game.grid.selected", { cellId, rowIndex, cellIndex });
         }
     };
+    console.log("handleSelectCell")
 
     useEffect(() => {
         socket.on("game.grid.view-state", (data) => {
@@ -25,7 +28,7 @@ const Grid = () => {
     }, []);
 
     const handleClicked = (id, isChecked) => (id == 'defi') ? !isChecked : isChecked;
-    
+
     return (
 <<<<<<< HEAD
 
@@ -38,7 +41,7 @@ const Grid = () => {
             {displayGrid &&
                 grid.map((row, rowIndex) => (
                     <View key={rowIndex} style={styles.row}>
-                        
+
                         {row.map((cell, cellIndex) => (
                             <TouchableOpacity
                                 key={cell.id}

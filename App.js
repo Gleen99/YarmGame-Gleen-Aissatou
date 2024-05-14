@@ -13,17 +13,22 @@ const Stack = createStackNavigator();
 LogBox.ignoreAllLogs(true);
 
 function App() {
-  return (
-    <SocketContext.Provider value={socket}>
-      <NavigationContainer> 
-        <Stack.Navigator initialRouteName="HomeScreen">
-          <Stack.Screen name="HomeScreen" component={HomeScreen} />
-          <Stack.Screen name="OnlineGameScreen" component={OnlineGameScreen} />
-          <Stack.Screen name="VsBotGameScreen" component={VsBotGameScreen} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </SocketContext.Provider>
-  );
+    return (
+        <SocketContext.Provider value={socket}>
+            <NavigationContainer>
+                <Stack.Navigator
+                    initialRouteName="HomeScreen"
+                    screenOptions={{
+                        headerShown: false, // Masquer la barre de navigation
+                    }}
+                >
+                    <Stack.Screen name="HomeScreen" component={HomeScreen} />
+                    <Stack.Screen name="OnlineGameScreen" component={OnlineGameScreen} />
+                    <Stack.Screen name="VsBotGameScreen" component={VsBotGameScreen} />
+                </Stack.Navigator>
+            </NavigationContainer>
+        </SocketContext.Provider>
+    );
 }
 
 export default App;
